@@ -1,70 +1,58 @@
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: cursive sans-serif ;
-}
-body{
-    height:100vh;
-    background-image: url("https://media.istockphoto.com/id/1160569491/es/foto/reloj-de-bolsillo-viejo-sobre-fondo-oscuro.jpg?s=612x612&w=0&k=20&c=yxUhPV5XJG9zRGQZlzHckDehHED75HZEZY2q1TTqF-E=");
-    background-repeat: no-repeat;
-    background-size:cover;
-    overflow: hidden;
-}
-#main-header{
-    border-radius: 5px;
-}
-#header-title{
-    font-size: 3rem;
-    font-weight: 700;
-    text-shadow: 2px 2px 2px #030202;
-}
-.container{
-    width:50%;
-    margin-top: 7em;
-}
-@media screen and (max-width: 800px) {
-    .container{
-        width:70%;
-    }
-  }
-@media screen and (max-width: 650px) {
-    .container{
-        width:80%;
-    }
-  }
-@media screen and (max-width: 500px) {
-    .container{
-        width:99%;
-        margin-top: 5em;
-    }
-  }
+body {
+            background-color:teal;
+            font-family: Arial, sans-serif;
+        }
 
-.item{
-    display: flex;
-    flex-direction: row;
-    padding: 1rem ;
-    border-bottom:4px solid rgb(249, 230, 146) ;
-}
+        .container {
+            margin-top: 30px;
+            background-color: lavender;
+            border-radius: 10px;
+            padding: 20px;
+        }
 
-.content{
-    display:1 1 0%;
-    width:90%;
-}
-.item .content .text {
-	font-size: 1.125rem;
-	width: 100%;
-    border-color: transparent;
-}
-.item .content .text:hover {
-    cursor:context-menu;
-}
-.item .actions {
-	display: flex;
-}
-.item .actions button {
-	margin-left: 0.5rem;
-	font-weight: 700;
-    font-size:0.9rem;
-    padding:2px 6px;
-}
+        .my-4 {
+            text-align: center;
+        }
+
+        .row {
+            margin-bottom: 20px;
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .list-group-item button {
+            margin-left: 10px;
+        }
+
+        .add-task-container {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .add-task-container .form-control {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .notification {
+            background-color: #17a2b8;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+        }
