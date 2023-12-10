@@ -1,65 +1,124 @@
-var add = document.getElementById('addToDo');
-var input = document.getElementById('inputField');
-var toDoContainer = document.getElementById('toDoContainer');
+document.addEventListener("DOMContentLoaded", function () {
+    const taskInput = document.getElementById("task");
+    const datetimeInput = document.getElementById("datetime");
+    const priorityInput = document.getElementById("priority"); // Add this line
+    const addBtn = document.getElementById("add");
+    const taskList = document.getElementById("task-list");
 
-add.addEventListener('click',addItem);
-input.addEventListener('keypress',function(e){
-    if(e.key=="Enter"){
-        addItem();
+    // Create an audio element for the notification sound
+    const notificationSound = new Audio("./mp3.wav"); // Replace "notification.mp3" with the path to your sound file
+
+    addBtn.addEventListener("click", addTask);
+
+    loadTasks();
+
+    function addTask() {
+        const taskText = taskInput.value;
+        const datetime = datetimeInput.value;
+        const priority = priorityInput.value; // Add this line
+
+        if (taskText.trim() === "" || datetime === "" || priority.trim() === "") {
+            alert("Task, date/time, and priority are required.");
+            return;
+        }
+
+        const task = { text: taskText, datetime: datetime, priority: priority }; // Update this line
+        saveTask(task);
+        taskInput.value = "";
+        datetimeInput.value = "";
+        priorityInput.value = ""; // Add this line
+        loadTasks();
+
+        // Check for due dates and set notifications
+        checkDueDate(task);
+    }
+
+    function saveTask(task) {
+        let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.push(task);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+        taskList.innerHTML = "";
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.innerHTML = `
+                <span>${task.text} (${task.datetime}) - Priority: ${task.priority}</span>
+                <button class="btn btn-sm btn-info edit-task" data-index="${i}">Edit</button>
+                <button class="btn btn-sm btn-danger delete-task" data-index="${i}">Delete</button>
+            `;
+            taskList.appendChild(listItem);
+
+            // Check for due dates and set notifications
+            checkDueDate(task);
+        }
+    }
+
+    taskList.addEventListener("click", function (event) {
+        if (event.target.classList.contains("edit-task")) {
+            editTask(event.target.getAttribute("data-index"));
+        } else if (event.target.classList.contains("delete-task")) {
+            deleteTask(event.target.getAttribute("data-index"));
+        }
+    });
+
+    function editTask(index) {
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const editedTask = tasks[index];
+
+        taskInput.value = editedTask.text;
+        datetimeInput.value = editedTask.datetime;
+        priorityInput.value = editedTask.priority; // Add this line
+
+        tasks.splice(index, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+        loadTasks();
+    }
+
+    function deleteTask(index) {
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.splice(index, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        loadTasks();
+    }
+
+    function checkDueDate(task) {
+        const dueDate = new Date(task.datetime);
+        const currentTime = new Date();
+
+        if (dueDate <= currentTime) {
+            // Display a notification
+            showNotification(`Task: ${task.text} is due now. Priority: ${task.priority}`);
+            // Play the notification sound
+            playNotificationSound();
+        } else {
+            // Set a timeout to show the notification and play the sound when due
+            const timeDifference = dueDate - currentTime;
+            setTimeout(() => {
+                showNotification(`Task: ${task.text} is due now. Priority: ${task.priority}`);
+                playNotificationSound();
+            }, timeDifference);
+        }
+    }
+
+    function showNotification(message) {
+        const notificationElement = document.getElementById("notification");
+        notificationElement.textContent = message;
+        notificationElement.style.display = "block";
+
+        // Hide the notification after 3 seconds (adjust as needed)
+        setTimeout(() => {
+            notificationElement.style.display = "none";
+        }, 3000);
+    }
+
+    function playNotificationSound() {
+        notificationSound.play();
     }
 });
-function addItem(e){
-  
-  const item_value  = input.value;
-  const item = document.createElement('div');
-		item.classList.add('item');
-
-		const item_content = document.createElement('div');
-		item_content.classList.add('content');
-
-		item.appendChild(item_content);
-
-		const input_item = document.createElement('input');
-		input_item.classList.add('text');
-		input_item.type = 'text';
-		input_item.value = item_value;
-		input_item.setAttribute('readonly', 'readonly');
-        input_item.addEventListener('dblclick', function(){
-            input_item.style.textDecoration = "line-through";
-        })
-		item_content.appendChild(input_item);
-
-		const item_action = document.createElement('div');
-		item_action.classList.add('actions');
-		
-		const edit_item = document.createElement('button');
-		edit_item.classList.add('edit','btn','btn-success');
-		edit_item.type="button";
-		edit_item.innerText = 'Edit';
-
-		const delete_item = document.createElement('button');
-		delete_item.classList.add('delete','btn','btn-danger','fa','fa-trash');
-
-		item_action.appendChild(edit_item);
-		item_action.appendChild(delete_item);
-
-		item.appendChild(item_action);
-
-		toDoContainer.appendChild(item);
-
-		input.value = '';
-    edit_item.addEventListener('click', (e) => {
-			if (edit_item.innerText.toLowerCase() == "edit") {
-				edit_item.innerText = "Save";
-				input_item.removeAttribute("readonly");
-				input_item.focus();
-			} else {
-				edit_item.innerText = "Edit";
-				input_item.setAttribute("readonly", "readonly");
-			}
-		});
-
-		delete_item.addEventListener('click', (e) => {
-			toDoContainer.removeChild(item);
-		});
-}
